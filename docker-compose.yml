@@ -1,0 +1,61 @@
+version: '3'
+
+services:
+  mariadb:
+    container_name: mariadb
+    image: mariadb:10.6
+    restart: always
+    environment:
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=cefim_voyage
+    volumes:
+      - ./initDatabase:/docker-entrypoint-initdb.d
+      - ./mariaDatabase:/var/lib/mysql
+    ports:
+      - "3307:3306"
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      interval: 30s
+      retries: 5
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      - PMA_HOST = mariadb
+      - PMA_PORT = 3307
+      - PMA_ARBITRARY=1
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  cefim_voyage_app:
+    build:
+      context: ./cefim_voyage_from_scratch
+    container_name: cefim_voyage_app
+    image: cefim_voyage_app:V1.0.0
+    ports:
+      - "8080:8080"
+    environment:
+      - PROFILE_ACTIVE=prod
+      - MARIADB_HOST=mariadb
+      - MARIADB_PORT=3306
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  smtp4dev:
+    container_name: SmtpMailer
+    image: rnwood/smtp4dev:v3
+    restart: always
+    ports:
+      # Change the number before : to the port the web interface should be accessible on
+      - "9081:80"
+      # Change the number before : to the port the SMTP server should be accessible on
+      - "1025:25"
+    depends_on:
+      phpmyadmin:
+        condition: service_started

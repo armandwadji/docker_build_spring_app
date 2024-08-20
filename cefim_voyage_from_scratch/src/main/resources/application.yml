@@ -1,0 +1,42 @@
+spring:
+  profiles:
+    active: ${PROFILE_ACTIVE:dev}
+
+  # ============================================
+  # Configuration Jpa Hibernate
+  # ============================================
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+      ddl-auto: create-drop
+    show-sql: false
+    database-platform: org.hibernate.dialect.H2Dialect
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        globally_quoted_identifiers: true
+
+  datasource:
+    url: jdbc:h2:mem:event-service
+    driverClassName: org.h2.Driver
+
+  # ============================================
+  # H2 DATABASE CONSOLE
+  # ============================================
+  h2:
+    console:
+      enabled: true
+
+  # ============================================
+  # GRAPHQL QUERY CONSOLE
+  # ============================================
+  graphql:
+    graphiql:
+      enabled: true
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  forward-headers-strategy: framework
