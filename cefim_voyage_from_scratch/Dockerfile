@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 
-RUN mvn package
+RUN mvn clean install -DskipTests
 
 FROM openjdk:24-slim-bullseye
 
