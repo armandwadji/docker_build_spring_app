@@ -34,7 +34,7 @@ services:
     build:
       context: ./cefim_voyage_from_scratch
     container_name: cefim_voyage_app
-    image: cefim_voyage_app:V1.0.0
+    image: cefim_voyage_app:1.0.0
     ports:
       - "8080:8080"
     environment:
